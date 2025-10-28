@@ -11,11 +11,14 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:8080', // Frontend URL
+  origin: process.env.FRONTEND_URL || 'http://localhost:8080', // Frontend URL
   credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from html-frontend directory
+app.use(express.static(path.join(__dirname, '../html-frontend')));
 
 // MongoDB Connection
 const connectDB = async () => {
@@ -54,8 +57,8 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Root endpoint
-app.get('/', (req, res) => {
+// API info endpoint
+app.get('/api', (req, res) => {
   res.json({ 
     message: 'Vaidya Telemedicine API',
     version: '1.0.0',

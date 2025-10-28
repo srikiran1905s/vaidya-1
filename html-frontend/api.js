@@ -1,5 +1,8 @@
 // API Service for Vaidya Application
-const API_BASE_URL = 'http://localhost:5000/api';
+// Use relative URL for production (when served from same domain) or localhost for development
+const API_BASE_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5000/api' 
+  : '/api';
 
 // Token Management
 const getToken = () => localStorage.getItem('authToken');
