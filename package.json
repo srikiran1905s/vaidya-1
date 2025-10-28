@@ -1,0 +1,15 @@
+{
+  "name": "vaidya-healthcare",
+  "version": "1.0.0",
+  "description": "Vaidya Healthcare Telemedicine Platform",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev",
+    "seed": "cd backend && npm run seed",
+    "install-backend": "cd backend && npm install"
+  },
+  "keywords": ["telemedicine", "healthcare", "nodejs", "mongodb"],
+  "author": "Srikiran",
+  "license": "MIT"
+}
