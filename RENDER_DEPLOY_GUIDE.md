@@ -21,8 +21,8 @@ Region: (Choose your preferred region)
 Branch: main
 Root Directory: (leave empty)
 Runtime: Node
-Build Command: npm run build
-Start Command: npm start
+Build Command: cd backend && npm install
+Start Command: cd backend && npm start
 ```
 
 ### Step 4: Add Environment Variables
@@ -44,10 +44,10 @@ Click **"Create Web Service"** and wait for deployment to complete.
 
 ## What Happens During Build:
 
-1. Render runs: `npm run build`
-   - This installs dependencies in the `backend` folder
-2. Render runs: `npm start`
-   - This starts the server with `node backend/server.js`
+1. Render runs: `cd backend && npm install`
+   - This changes to backend folder and installs all dependencies
+2. Render runs: `cd backend && npm start`
+   - This changes to backend folder and starts the server with `node server.js`
 
 ---
 
@@ -101,7 +101,7 @@ git push origin main
 ## Troubleshooting
 
 ### Error: Cannot find module
-**Solution:** Make sure Build Command is `npm run build` (NOT `cd backend && npm install`)
+**Solution:** Make sure Build Command is `cd backend && npm install` and Start Command is `cd backend && npm start`
 
 ### Error: MONGODB connection failed
 **Solution:** Check MONGODB_URI in environment variables
@@ -116,8 +116,8 @@ git push origin main
 | Setting | Value |
 |---------|-------|
 | Root Directory | (empty) |
-| Build Command | `npm run build` |
-| Start Command | `npm start` |
+| Build Command | `cd backend && npm install` |
+| Start Command | `cd backend && npm start` |
 
 ---
 
