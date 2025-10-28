@@ -125,13 +125,27 @@ For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
 - [Frontend README](./html-frontend/README.md)
 - [Deployment Guide](./DEPLOYMENT.md)
 
-## 👨‍💻 Author
+## 👨‍💻 Author & Credits
 
-Srikiran - [GitHub](https://github.com/srikiran1905s)
+**Developer:** Srikiran - [GitHub](https://github.com/srikiran1905s)
+
+**Development Assistant:** Cascade AI - Windsurf IDE
+
+**Project Contributions:**
+- Full-stack development (HTML/CSS/JS Frontend + Node.js Backend)
+- MongoDB database integration
+- RESTful API design and implementation
+- Authentication & authorization system
+- Deployment configuration for Render
+- Complete documentation
 
 ## 📝 License
 
 MIT
+
+---
+
+**Built with ❤️ using Windsurf IDE and Cascade AI**
 
 The application will be available at `http://localhost:8080`
 

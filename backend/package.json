@@ -9,7 +9,7 @@
     "seed": "node seed.js"
   },
   "keywords": ["telemedicine", "healthcare", "api"],
-  "author": "",
+  "author": "Srikiran (with Cascade AI)",
   "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
