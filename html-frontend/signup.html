@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Vaidya</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'hsl(174, 62%, 47%)',
+                        secondary: 'hsl(217, 91%, 60%)',
+                        accent: 'hsl(174, 70%, 95%)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-accent/30 to-white min-h-screen">
+    
+    <div class="min-h-screen flex items-center justify-center px-4 py-12">
+        <div class="w-full max-w-md p-8 bg-white rounded-xl shadow-2xl">
+            <!-- Logo and Header -->
+            <div class="text-center mb-8">
+                <a href="index.html" class="inline-flex items-center gap-2 mb-6">
+                    <svg class="h-8 w-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                    <span class="text-2xl font-bold">Vaidya</span>
+                </a>
+                <h1 class="text-3xl font-bold mb-2">Create Account</h1>
+                <p class="text-gray-600">Join thousands of users on Vaidya</p>
+            </div>
+
+            <!-- Role Selection -->
+            <div class="flex gap-2 mb-6">
+                <button id="patientBtn" class="flex-1 px-4 py-2 bg-primary text-white rounded-lg transition-colors font-medium">
+                    Patient
+                </button>
+                <button id="doctorBtn" class="flex-1 px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-primary transition-colors font-medium">
+                    Doctor
+                </button>
+            </div>
+
+            <!-- Sign Up Form -->
+            <form id="signupForm" class="space-y-4">
+                <div class="space-y-2">
+                    <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="John Doe"
+                        required
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                    />
+                </div>
+
+                <div class="space-y-2">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="you@example.com"
+                        required
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                    />
+                </div>
+
+                <!-- Patient Specific Fields -->
+                <div id="patientFields">
+                    <div class="space-y-2">
+                        <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
+                        <input
+                            type="number"
+                            id="age"
+                            name="age"
+                            placeholder="25"
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                        />
+                    </div>
+                </div>
+
+                <!-- Doctor Specific Fields -->
+                <div id="doctorFields" class="hidden space-y-4">
+                    <div class="space-y-2">
+                        <label for="specialization" class="block text-sm font-medium text-gray-700">Specialization</label>
+                        <input
+                            type="text"
+                            id="specialization"
+                            name="specialization"
+                            placeholder="Cardiology"
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                        />
+                    </div>
+                    <div class="space-y-2">
+                        <label for="license" class="block text-sm font-medium text-gray-700">License Number</label>
+                        <input
+                            type="text"
+                            id="license"
+                            name="license"
+                            placeholder="MD123456"
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                        />
+                    </div>
+                    <div class="space-y-2">
+                        <label for="hospital" class="block text-sm font-medium text-gray-700">Hospital Affiliation</label>
+                        <input
+                            type="text"
+                            id="hospital"
+                            name="hospital"
+                            placeholder="City General Hospital"
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                        />
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="••••••••"
+                        required
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                    />
+                </div>
+
+                <div class="space-y-2">
+                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        placeholder="••••••••"
+                        required
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                    />
+                </div>
+
+                <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-medium hover:opacity-90 transition-opacity">
+                    Create Account
+                </button>
+            </form>
+
+            <!-- Sign In Link -->
+            <div class="mt-6 text-center text-sm">
+                <span class="text-gray-600">Already have an account? </span>
+                <a href="signin.html" class="text-primary hover:underline font-medium">
+                    Sign in
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast" class="fixed top-4 right-4 hidden">
+        <div class="bg-white border-l-4 border-primary rounded-lg shadow-xl p-4 max-w-sm">
+            <p id="toastMessage" class="text-gray-800"></p>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        let selectedRole = 'patient';
+
+        // Role selection
+        document.getElementById('patientBtn').addEventListener('click', function() {
+            selectedRole = 'patient';
+            this.classList.add('bg-primary', 'text-white');
+            this.classList.remove('border-2', 'border-gray-300', 'text-gray-700');
+            document.getElementById('doctorBtn').classList.remove('bg-primary', 'text-white');
+            document.getElementById('doctorBtn').classList.add('border-2', 'border-gray-300', 'text-gray-700');
+            
+            // Show/hide fields
+            document.getElementById('patientFields').classList.remove('hidden');
+            document.getElementById('doctorFields').classList.add('hidden');
+        });
+
+        document.getElementById('doctorBtn').addEventListener('click', function() {
+            selectedRole = 'doctor';
+            this.classList.add('bg-primary', 'text-white');
+            this.classList.remove('border-2', 'border-gray-300', 'text-gray-700');
+            document.getElementById('patientBtn').classList.remove('bg-primary', 'text-white');
+            document.getElementById('patientBtn').classList.add('border-2', 'border-gray-300', 'text-gray-700');
+            
+            // Show/hide fields
+            document.getElementById('patientFields').classList.add('hidden');
+            document.getElementById('doctorFields').classList.remove('hidden');
+        });
+
+        // Toast notification function
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Form submission
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validation
+            if (!name || !email || !password) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showToast('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            const signupData = {
+                name,
+                email,
+                password,
+                role: selectedRole
+            };
+
+            if (selectedRole === 'patient') {
+                signupData.age = parseInt(document.getElementById('age').value) || 0;
+            } else {
+                signupData.specialty = document.getElementById('specialization').value;
+                signupData.license = document.getElementById('license').value;
+                signupData.hospital = document.getElementById('hospital').value;
+            }
+
+            try {
+                await authAPI.signup(signupData);
+                showToast('Account created successfully! Please sign in.');
+                
+                setTimeout(() => {
+                    window.location.href = 'signin.html';
+                }, 1500);
+            } catch (error) {
+                showToast(error.message || 'Signup failed. Please try again.', 'error');
+            }
+        });
+    </script>
+
+</body>
+</html>

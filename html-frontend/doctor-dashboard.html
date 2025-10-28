@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard - Vaidya</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: 'hsl(174, 62%, 47%)',
+                        secondary: 'hsl(217, 91%, 60%)',
+                        accent: 'hsl(174, 70%, 95%)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-white border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <a href="index.html" class="flex items-center gap-2">
+                    <svg class="h-6 w-6 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                    <span class="text-xl font-bold">Vaidya</span>
+                </a>
+            </div>
+            <nav class="flex-1 p-4">
+                <div class="space-y-2">
+                    <button onclick="showView('dashboard')" class="nav-item active w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        <span>Dashboard</span>
+                    </button>
+                    <button onclick="showView('schedule')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <span>Schedule</span>
+                    </button>
+                    <button onclick="showView('patients')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        <span>Patients</span>
+                    </button>
+                    <button onclick="showView('consultations')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                        <span>Consultations</span>
+                    </button>
+                    <button onclick="showView('prescriptions')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span>Prescriptions</span>
+                    </button>
+                    <button onclick="showView('messages')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                        <span>Messages</span>
+                    </button>
+                    <button onclick="showView('settings')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>Settings</span>
+                    </button>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-auto">
+            <!-- Header -->
+            <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+                <div class="flex items-center justify-between p-4">
+                    <div>
+                        <h1 class="text-2xl font-bold">Doctor Dashboard</h1>
+                        <p id="doctorInfo" class="text-sm text-gray-600">Loading...</p>
+                    </div>
+                    <button onclick="logout()" class="px-4 py-2 text-gray-700 hover:text-primary transition-colors">Logout</button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="p-6">
+                <!-- Dashboard View -->
+                <div id="dashboardView" class="view-content">
+                    <!-- Stats Grid -->
+                    <div id="statsGrid" class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Today's Appointments</p>
+                                    <p class="text-3xl font-bold mt-1">0</p>
+                                </div>
+                                <svg class="h-8 w-8 text-primary opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Waiting Patients</p>
+                                    <p class="text-3xl font-bold mt-1">0</p>
+                                </div>
+                                <svg class="h-8 w-8 text-yellow-500 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Total Patients</p>
+                                    <p class="text-3xl font-bold mt-1">0</p>
+                                </div>
+                                <svg class="h-8 w-8 text-secondary opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Consultations</p>
+                                    <p class="text-3xl font-bold mt-1">0</p>
+                                </div>
+                                <svg class="h-8 w-8 text-green-500 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid lg:grid-cols-2 gap-6 mb-6">
+                        <!-- Today's Schedule -->
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-xl font-semibold mb-4">Today's Schedule</h3>
+                            <div id="scheduleContent" class="text-center text-gray-500 py-8">
+                                <p>Loading schedule...</p>
+                            </div>
+                        </div>
+
+                        <!-- Recent Patients -->
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h3 class="text-xl font-semibold mb-4">Recent Patients</h3>
+                            <div id="recentPatientsContent" class="text-center text-gray-500 py-8">
+                                <p>Loading patients...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4">Quick Actions</h3>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <button class="p-6 border-2 border-gray-200 rounded-xl hover:border-primary transition-colors flex flex-col items-center gap-3">
+                                <svg class="h-10 w-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <span class="font-semibold">Write Prescription</span>
+                            </button>
+                            <button onclick="showView('schedule')" class="p-6 border-2 border-gray-200 rounded-xl hover:border-primary transition-colors flex flex-col items-center gap-3">
+                                <svg class="h-10 w-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <span class="font-semibold">Manage Schedule</span>
+                            </button>
+                            <button onclick="showView('messages')" class="p-6 border-2 border-gray-200 rounded-xl hover:border-primary transition-colors flex flex-col items-center gap-3">
+                                <svg class="h-10 w-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                </svg>
+                                <span class="font-semibold">Patient Messages</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule View -->
+                <div id="scheduleView" class="view-content hidden">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-2xl font-bold mb-4">Schedule Management</h2>
+                        <div id="fullScheduleContent" class="text-center text-gray-500 py-12">
+                            <p>Loading schedule...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patients View -->
+                <div id="patientsView" class="view-content hidden">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-2xl font-bold mb-4">Patient Database</h2>
+                        <div id="allPatientsContent" class="text-center text-gray-500 py-12">
+                            <p>Loading patient database...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consultations View -->
+                <div id="consultationsView" class="view-content hidden">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-2xl font-bold mb-4">Consultations</h2>
+                        <div id="consultationsContent" class="text-center text-gray-500 py-12">
+                            <p>Loading consultations...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prescriptions View -->
+                <div id="prescriptionsView" class="view-content hidden">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-2xl font-bold mb-4">Prescriptions</h2>
+                        <div id="prescriptionsContent" class="text-center text-gray-500 py-12">
+                            <p>Loading prescriptions...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages View -->
+                <div id="messagesView" class="view-content hidden">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-2xl font-bold mb-4">Messages</h2>
+                        <div id="messagesContent" class="text-center text-gray-500 py-12">
+                            <p>Loading messages...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings View -->
+                <div id="settingsView" class="view-content hidden">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h2 class="text-2xl font-bold mb-4">Settings</h2>
+                        <div class="text-center text-gray-500 py-8">
+                            <p>Settings data will be loaded from database</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Check authentication
+        if (!getToken()) {
+            window.location.href = 'signin.html';
+        }
+
+        // View management
+        function showView(viewName) {
+            document.querySelectorAll('.view-content').forEach(view => {
+                view.classList.add('hidden');
+            });
+            
+            document.getElementById(viewName + 'View').classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active', 'bg-accent', 'text-primary');
+                item.classList.add('text-gray-700', 'hover:bg-gray-100');
+            });
+            event.target.closest('.nav-item').classList.add('active', 'bg-accent', 'text-primary');
+            event.target.closest('.nav-item').classList.remove('text-gray-700', 'hover:bg-gray-100');
+        }
+
+        // Load doctor data
+        async function loadDoctorData() {
+            try {
+                const profile = await doctorAPI.getProfile();
+                document.getElementById('doctorInfo').textContent = `${profile.name}${profile.specialty ? ' - ' + profile.specialty : ''}`;
+
+                // Load stats
+                try {
+                    const stats = await doctorAPI.getStats();
+                    if (stats && stats.length > 0) {
+                        const statsHTML = stats.map((stat, index) => `
+                            <div class="bg-white rounded-xl shadow-lg p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600">${stat.label}</p>
+                                        <p class="text-3xl font-bold mt-1">${stat.value}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                        document.getElementById('statsGrid').innerHTML = statsHTML;
+                    }
+                } catch (error) {
+                    console.log('Using default stats');
+                }
+
+                // Load upcoming consultations
+                try {
+                    const consultations = await doctorAPI.getUpcomingConsultations();
+                    if (consultations && consultations.length > 0) {
+                        document.getElementById('scheduleContent').innerHTML = `
+                            <div class="space-y-3">
+                                ${consultations.map(consultation => `
+                                    <div class="p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors text-left">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div>
+                                                <p class="font-semibold">${consultation.patient}</p>
+                                                <p class="text-sm text-gray-600">${consultation.type} Consultation</p>
+                                            </div>
+                                            ${consultation.priority === 'high' ? '<span class="text-xs px-2 py-1 rounded bg-red-100 text-red-600 font-medium">High Priority</span>' : ''}
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-sm text-gray-600">${consultation.time}</span>
+                                            <button class="px-3 py-1 text-sm border border-primary text-primary rounded hover:bg-accent">Start</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    } else {
+                        document.getElementById('scheduleContent').innerHTML = '<p>No consultations scheduled for today</p>';
+                    }
+                } catch (error) {
+                    document.getElementById('scheduleContent').innerHTML = '<p>No appointments in schedule</p>';
+                }
+
+                // Load recent patients
+                try {
+                    const patients = await doctorAPI.getRecentPatients();
+                    if (patients && patients.length > 0) {
+                        document.getElementById('recentPatientsContent').innerHTML = `
+                            <div class="space-y-3">
+                                ${patients.map(patient => `
+                                    <div class="p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                        <div class="flex items-center justify-between">
+                                            <div class="text-left">
+                                                <p class="font-semibold">${patient.name}</p>
+                                                <p class="text-sm text-gray-600">${patient.condition}</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="text-sm text-gray-600">${patient.lastVisit}</p>
+                                                <button class="mt-1 px-3 py-1 text-sm text-primary hover:bg-accent rounded">View Records</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    } else {
+                        document.getElementById('recentPatientsContent').innerHTML = '<p>No recent patient activity</p>';
+                    }
+                } catch (error) {
+                    document.getElementById('recentPatientsContent').innerHTML = '<p>No recent patients</p>';
+                }
+            } catch (error) {
+                console.error('Error loading doctor data:', error);
+            }
+        }
+
+        // Initialize
+        loadDoctorData();
+    </script>
+
+</body>
+</html>
