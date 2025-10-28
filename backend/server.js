@@ -23,20 +23,28 @@ app.use(express.static(path.join(__dirname, '../html-frontend')));
 // MongoDB Connection
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log('✅ MongoDB Connected Successfully!');
     console.log('📊 Database:', mongoose.connection.name);
   } catch (error) {
     console.error('❌ MongoDB Connection Error:', error.message);
-    process.exit(1);
+    console.error('⚠️  Server will continue running, but database operations will fail');
+    // Don't exit - keep server running for health checks
   }
 };
 
 // Connect to database
 connectDB();
+
+// MongoDB error handlers
+mongoose.connection.on('error', (err) => {
+  console.error('❌ MongoDB runtime error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.warn('⚠️  MongoDB disconnected. Attempting to reconnect...');
+  setTimeout(connectDB, 5000);
+});
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -80,10 +88,22 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+// Global error handlers to prevent crashes
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  // Log the error but don't crash the server
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+  // Log the error but don't crash the server
+});
+
+// Start server with proper configuration for Render
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌐 API URL: http://localhost:${PORT}`);
+  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`💚 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`📡 Listening on 0.0.0.0:${PORT}`);
 });
