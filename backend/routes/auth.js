@@ -43,16 +43,27 @@ router.post('/signup', [
         name,
         email,
         password: hashedPassword,
-        age: age || 0
+        age: age || 25,
+        dateOfBirth: new Date(2000, 0, 1), // Default date
+        gender: 'Prefer not to say',
+        phone: '0000000000', // Placeholder phone
+        emergencyContact: {
+          name: 'Emergency Contact',
+          phone: '0000000000',
+          relation: 'Family'
+        }
       });
     } else {
       user = new Doctor({
         name,
         email,
         password: hashedPassword,
-        specialty: specialty || '',
+        specialty: specialty || 'General Physician',
         license: license || `LIC${Date.now()}`,
-        hospital: hospital || ''
+        hospital: hospital || '',
+        dateOfBirth: new Date(1980, 0, 1), // Default date
+        gender: 'Prefer not to say',
+        phone: '0000000000' // Placeholder phone
       });
     }
 
