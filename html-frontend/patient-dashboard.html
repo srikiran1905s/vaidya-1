@@ -53,11 +53,11 @@
                         </svg>
                         <span>Health Records</span>
                     </button>
-                    <button onclick="showView('consultations')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
+                    <button onclick="showView('prescriptions')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
-                        <span>Consultations</span>
+                        <span>Prescriptions</span>
                     </button>
                     <button onclick="showView('chat')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,14 +104,14 @@
                     </div>
 
                     <!-- Quick Actions -->
-                    <div class="grid md:grid-cols-3 gap-4 mb-6">
-                        <button class="p-6 bg-white rounded-xl shadow hover:shadow-lg transition-shadow flex flex-col items-center gap-3 border border-gray-200">
+                    <div class="grid md:grid-cols-2 gap-4 mb-6">
+                        <button onclick="showBookAppointment()" class="p-6 bg-white rounded-xl shadow hover:shadow-lg transition-shadow flex flex-col items-center gap-3 border border-gray-200">
                             <svg class="h-10 w-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                             <span class="font-semibold">Book Appointment</span>
                         </button>
-                        <button class="p-6 bg-white rounded-xl shadow hover:shadow-lg transition-shadow flex flex-col items-center gap-3 border border-gray-200">
+                        <button onclick="startVideoCall()" class="p-6 bg-white rounded-xl shadow hover:shadow-lg transition-shadow flex flex-col items-center gap-3 border border-gray-200">
                             <svg class="h-10 w-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                             </svg>
@@ -171,19 +171,78 @@
                 <!-- Health Records View -->
                 <div id="recordsView" class="view-content hidden">
                     <div class="bg-white rounded-xl shadow-lg p-6">
-                        <h2 class="text-2xl font-bold mb-4">Health Records</h2>
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold">Health Records</h2>
+                            <button onclick="showAddRecordForm()" class="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90">Add Record</button>
+                        </div>
                         <div id="healthRecordsContent" class="text-center text-gray-500 py-12">
                             <p>Loading health records...</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Consultations View -->
-                <div id="consultationsView" class="view-content hidden">
+                <!-- Video Call Modal -->
+                <div id="videoCallModal" class="fixed inset-0 bg-black hidden z-50">
+                    <div class="h-full flex flex-col">
+                        <div class="bg-gray-900 p-4 flex justify-between items-center">
+                            <h3 class="text-white font-semibold">Video Consultation</h3>
+                            <button onclick="endVideoCall()" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">End Call</button>
+                        </div>
+                        <div class="flex-1 relative bg-gray-800">
+                            <video id="localVideo" autoplay muted class="absolute top-4 right-4 w-48 h-36 bg-gray-700 rounded-lg border-2 border-white"></video>
+                            <div class="w-full h-full flex items-center justify-center">
+                                <div class="text-center text-white">
+                                    <svg class="h-32 w-32 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                    </svg>
+                                    <p class="text-xl">Waiting for doctor to join...</p>
+                                    <p class="text-sm text-gray-400 mt-2">Your camera is active</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-900 p-4 flex justify-center gap-4">
+                            <button id="toggleVideo" onclick="toggleVideo()" class="p-4 bg-gray-700 rounded-full hover:bg-gray-600">
+                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                </svg>
+                            </button>
+                            <button id="toggleAudio" onclick="toggleAudio()" class="p-4 bg-gray-700 rounded-full hover:bg-gray-600">
+                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Record Modal -->
+                <div id="addRecordModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+                    <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+                        <h3 class="text-xl font-bold mb-4">Add Health Record</h3>
+                        <form id="addRecordForm" class="space-y-3">
+                            <input type="text" id="recordTitle" placeholder="Title" class="w-full px-3 py-2 border rounded-lg" required>
+                            <select id="recordType" class="w-full px-3 py-2 border rounded-lg" required>
+                                <option value="Lab Results">Lab Results</option>
+                                <option value="Prescription">Prescription</option>
+                                <option value="X-Ray">X-Ray</option>
+                                <option value="Report">Report</option>
+                            </select>
+                            <input type="text" id="recordDoctor" placeholder="Doctor Name" class="w-full px-3 py-2 border rounded-lg" required>
+                            <textarea id="recordDescription" placeholder="Description" class="w-full px-3 py-2 border rounded-lg" rows="3"></textarea>
+                            <div class="flex gap-2">
+                                <button type="submit" class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90">Add</button>
+                                <button type="button" onclick="closeAddRecordForm()" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Prescriptions View -->
+                <div id="prescriptionsView" class="view-content hidden">
                     <div class="bg-white rounded-xl shadow-lg p-6">
-                        <h2 class="text-2xl font-bold mb-4">Consultations</h2>
-                        <div id="consultationsContent" class="text-center text-gray-500 py-12">
-                            <p>Loading consultations...</p>
+                        <h2 class="text-2xl font-bold mb-4">My Prescriptions</h2>
+                        <div id="prescriptionsContent" class="text-center text-gray-500 py-12">
+                            <p>Loading prescriptions...</p>
                         </div>
                     </div>
                 </div>
@@ -193,14 +252,84 @@
                     <div class="bg-white rounded-xl shadow-lg p-6 h-[calc(100vh-12rem)]">
                         <h2 class="text-2xl font-bold mb-4">AI Health Assistant</h2>
                         <div class="flex flex-col h-[calc(100%-4rem)]">
-                            <div class="flex-1 overflow-y-auto mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                                <p class="text-gray-600 text-center">AI chat feature coming soon...</p>
+                            <div id="chatMessages" class="flex-1 overflow-y-auto mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3">
+                                <div class="bg-blue-100 p-3 rounded-lg">
+                                    <p class="text-sm font-medium text-blue-800">AI Assistant</p>
+                                    <p class="text-blue-700">Hello! I'm your AI health assistant. How can I help you today?</p>
+                                </div>
                             </div>
                             <div class="flex gap-2">
-                                <input type="text" placeholder="Type your message..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
-                                <button class="px-6 py-2 bg-primary text-white rounded-lg hover:opacity-90">Send</button>
+                                <input id="chatInput" type="text" placeholder="Type your message..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary">
+                                <button onclick="sendAIMessage()" class="px-6 py-2 bg-primary text-white rounded-lg hover:opacity-90">Send</button>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Book Appointment Modal -->
+                <div id="bookAppointmentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+                    <div class="bg-white rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold">Book Appointment</h3>
+                            <button onclick="closeBookAppointment()" class="text-gray-500 hover:text-gray-700">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="doctorsList" class="space-y-3">
+                            <p class="text-center text-gray-500">Loading doctors...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Details Modal -->
+                <div id="bookingDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center overflow-y-auto">
+                    <div class="bg-white rounded-xl p-6 w-full max-w-4xl mx-4 my-8">
+                        <h3 class="text-xl font-bold mb-4">Book Appointment - <span id="selectedDoctorName"></span></h3>
+                        <form id="bookingDetailsForm" class="space-y-4">
+                            <div class="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                                    <input type="text" id="bookingName" class="w-full px-3 py-2 border rounded-lg" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Appointment Type</label>
+                                    <select id="bookingType" class="w-full px-3 py-2 border rounded-lg" required>
+                                        <option value="Video Consultation">Video Consultation</option>
+                                        <option value="Initial">Initial Consultation</option>
+                                        <option value="Follow-up">Follow-up</option>
+                                        <option value="Emergency">Emergency</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Health Issue</label>
+                                    <textarea id="bookingIssue" class="w-full px-3 py-2 border rounded-lg" rows="1" placeholder="Describe your concern" required></textarea>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Select Date & Time</label>
+                                <div id="weeklyCalendar" class="border rounded-lg overflow-hidden">
+                                    <div class="grid grid-cols-8 bg-gray-100">
+                                        <div class="p-2 text-center font-medium text-sm border-r">Time</div>
+                                        <div class="p-2 text-center font-medium text-sm border-r" id="day0"></div>
+                                        <div class="p-2 text-center font-medium text-sm border-r" id="day1"></div>
+                                        <div class="p-2 text-center font-medium text-sm border-r" id="day2"></div>
+                                        <div class="p-2 text-center font-medium text-sm border-r" id="day3"></div>
+                                        <div class="p-2 text-center font-medium text-sm border-r" id="day4"></div>
+                                        <div class="p-2 text-center font-medium text-sm border-r" id="day5"></div>
+                                        <div class="p-2 text-center font-medium text-sm" id="day6"></div>
+                                    </div>
+                                    <div id="timeSlots"></div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="selectedDate" required>
+                            <input type="hidden" id="selectedTime" required>
+                            <div class="flex gap-2 pt-2">
+                                <button type="submit" class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90">Confirm Booking</button>
+                                <button type="button" onclick="closeBookingDetails()" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -208,8 +337,8 @@
                 <div id="profileView" class="view-content hidden">
                     <div class="bg-white rounded-xl shadow-lg p-6">
                         <h2 class="text-2xl font-bold mb-4">Profile Settings</h2>
-                        <div class="text-center text-gray-500 py-8">
-                            <p>Profile data will be loaded from database</p>
+                        <div id="profileContent" class="text-center text-gray-500 py-8">
+                            <p>Loading profile...</p>
                         </div>
                     </div>
                 </div>
@@ -289,7 +418,7 @@
                                     </svg>
                                     <span>${appointment.date}</span>
                                 </div>
-                                <button class="w-full px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90">
+                                <button onclick="startVideoCall()" class="w-full px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:opacity-90">
                                     Join Consultation
                                 </button>
                             </div>
@@ -334,8 +463,584 @@
             }
         }
 
+        // Book appointment functions
+        async function showBookAppointment() {
+            document.getElementById('bookAppointmentModal').classList.remove('hidden');
+            try {
+                const doctors = await commonAPI.getAllDoctors();
+                const doctorsList = document.getElementById('doctorsList');
+                if (doctors && doctors.length > 0) {
+                    doctorsList.innerHTML = doctors.map(doctor => `
+                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-semibold">${doctor.name}</h4>
+                                    <p class="text-sm text-gray-600">${doctor.specialty || 'General Physician'}</p>
+                                </div>
+                                <button onclick="bookWithDoctor('${doctor.id}', '${doctor.name}', '${doctor.specialty || 'General Physician'}')" class="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90">
+                                    Book
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    doctorsList.innerHTML = '<p class="text-center text-gray-500">No doctors available</p>';
+                }
+            } catch (error) {
+                console.error('Error loading doctors:', error);
+                document.getElementById('doctorsList').innerHTML = '<p class="text-center text-red-500">Error: ' + error.message + '</p>';
+            }
+        }
+
+        function closeBookAppointment() {
+            document.getElementById('bookAppointmentModal').classList.add('hidden');
+        }
+
+        let selectedDoctor = null;
+        let bookedSlots = {};
+        const timeSlots = ['9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'];
+
+        async function bookWithDoctor(doctorId, doctorName, specialty) {
+            selectedDoctor = { doctorId, doctorName, specialty };
+            document.getElementById('bookAppointmentModal').classList.add('hidden');
+            document.getElementById('bookingDetailsModal').classList.remove('hidden');
+            document.getElementById('selectedDoctorName').textContent = doctorName;
+            
+            // Load doctor availability
+            try {
+                const response = await fetch(`${API_BASE_URL}/doctors/${doctorId}/availability`, {
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                const data = await response.json();
+                bookedSlots = data.bookedSlots || {};
+            } catch (error) {
+                bookedSlots = {};
+            }
+            
+            renderWeeklyCalendar();
+        }
+
+        function renderWeeklyCalendar() {
+            const today = new Date();
+            const days = [];
+            
+            // Generate next 7 days
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                days.push(date);
+                
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+                const dayNum = date.getDate();
+                const month = date.toLocaleDateString('en-US', { month: 'short' });
+                document.getElementById(`day${i}`).innerHTML = `<div>${dayName}</div><div class="text-xs text-gray-500">${month} ${dayNum}</div>`;
+            }
+            
+            // Generate time slots grid
+            let slotsHTML = '';
+            timeSlots.forEach(time => {
+                slotsHTML += '<div class="grid grid-cols-8 border-t">';
+                slotsHTML += `<div class="p-2 text-sm text-gray-600 border-r bg-gray-50">${time}</div>`;
+                
+                days.forEach((date, index) => {
+                    const dateStr = date.toISOString().split('T')[0];
+                    const slotKey = `${dateStr}_${time}`;
+                    const isBooked = bookedSlots[slotKey];
+                    const isPast = date < today && date.toDateString() !== today.toDateString();
+                    
+                    if (isBooked || isPast) {
+                        slotsHTML += `<div class="p-2 text-center bg-gray-200 text-gray-400 text-sm ${index < 6 ? 'border-r' : ''}">Booked</div>`;
+                    } else {
+                        slotsHTML += `<button type="button" onclick="selectSlot('${dateStr}', '${time}')" class="slot-btn p-2 text-center hover:bg-primary hover:text-white text-sm transition-colors ${index < 6 ? 'border-r' : ''}">Available</button>`;
+                    }
+                });
+                
+                slotsHTML += '</div>';
+            });
+            
+            document.getElementById('timeSlots').innerHTML = slotsHTML;
+        }
+
+        function selectSlot(date, time) {
+            // Remove previous selection
+            document.querySelectorAll('.slot-btn').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white');
+            });
+            
+            // Highlight selected
+            event.target.classList.add('bg-primary', 'text-white');
+            
+            document.getElementById('selectedDate').value = date;
+            document.getElementById('selectedTime').value = time;
+        }
+
+        function closeBookingDetails() {
+            document.getElementById('bookingDetailsModal').classList.add('hidden');
+            document.getElementById('bookingDetailsForm').reset();
+            selectedDoctor = null;
+            bookedSlots = {};
+        }
+
+        document.getElementById('bookingDetailsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (!selectedDoctor) return;
+            
+            const selectedDate = document.getElementById('selectedDate').value;
+            const selectedTime = document.getElementById('selectedTime').value;
+            
+            if (!selectedDate || !selectedTime) {
+                showToast('Please select a date and time slot', 'error');
+                return;
+            }
+            
+            try {
+                const appointment = {
+                    doctorId: selectedDoctor.doctorId,
+                    doctorName: selectedDoctor.doctorName,
+                    specialty: selectedDoctor.specialty,
+                    patientName: document.getElementById('bookingName').value,
+                    healthIssue: document.getElementById('bookingIssue').value,
+                    date: selectedDate,
+                    time: selectedTime,
+                    type: document.getElementById('bookingType').value,
+                    status: 'scheduled'
+                };
+                await patientAPI.bookAppointment(appointment);
+                showToast('Appointment booked successfully!');
+                closeBookingDetails();
+                loadPatientData();
+                loadAllAppointments();
+            } catch (error) {
+                console.error('Booking error:', error);
+                showToast('Failed to book appointment: ' + error.message, 'error');
+            }
+        });
+
+        // AI Chat functions
+        async function sendAIMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // Add user message
+            chatMessages.innerHTML += `
+                <div class="bg-gray-100 p-3 rounded-lg ml-8">
+                    <p class="text-sm font-medium text-gray-800">You</p>
+                    <p class="text-gray-700">${message}</p>
+                </div>
+            `;
+            
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Add loading indicator
+            chatMessages.innerHTML += `
+                <div id="loadingMsg" class="bg-blue-100 p-3 rounded-lg mr-8">
+                    <p class="text-sm font-medium text-blue-800">AI Assistant</p>
+                    <p class="text-blue-700">Thinking...</p>
+                </div>
+            `;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await aiAPI.sendMessage(message);
+                document.getElementById('loadingMsg').remove();
+                chatMessages.innerHTML += `
+                    <div class="bg-blue-100 p-3 rounded-lg mr-8">
+                        <p class="text-sm font-medium text-blue-800">AI Assistant</p>
+                        <p class="text-blue-700">${response}</p>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('AI Error:', error);
+                document.getElementById('loadingMsg').remove();
+                chatMessages.innerHTML += `
+                    <div class="bg-red-100 p-3 rounded-lg mr-8">
+                        <p class="text-sm font-medium text-red-800">AI Assistant</p>
+                        <p class="text-red-700">Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Enter key support for chat
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendAIMessage();
+            }
+        });
+
+        // Load appointments view
+        async function loadAllAppointments() {
+            try {
+                const appointments = await patientAPI.getAppointments();
+                const content = document.getElementById('allAppointmentsContent');
+                if (appointments && appointments.length > 0) {
+                    content.innerHTML = `
+                        <div class="space-y-3">
+                            ${appointments.map(apt => `
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-semibold">${apt.doctorName}</h4>
+                                            <p class="text-sm text-gray-600">${apt.specialty || 'General'}</p>
+                                            <p class="text-sm text-gray-500 mt-1">${apt.date} at ${apt.time}</p>
+                                            <span class="inline-block mt-2 px-2 py-1 text-xs rounded ${apt.status === 'scheduled' ? 'bg-green-100 text-green-800' : apt.status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}">
+                                                ${apt.status}
+                                            </span>
+                                        </div>
+                                        <div class="flex flex-col items-end gap-2">
+                                            <span class="text-sm text-gray-500">${apt.type}</span>
+                                            ${apt.status === 'scheduled' ? `<button onclick="cancelAppointment('${apt.id}')" class="px-3 py-1 text-sm text-red-600 border border-red-600 rounded hover:bg-red-50">Cancel</button>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = '<p class="text-center text-gray-500">No appointments found</p>';
+                }
+            } catch (error) {
+                document.getElementById('allAppointmentsContent').innerHTML = '<p class="text-center text-red-500">Error loading appointments</p>';
+            }
+        }
+
+        async function cancelAppointment(appointmentId) {
+            if (!confirm('Are you sure you want to cancel this appointment?')) return;
+            try {
+                console.log('Cancelling appointment:', appointmentId);
+                await patientAPI.cancelAppointment(appointmentId);
+                showToast('Appointment cancelled successfully');
+                loadAllAppointments();
+                loadPatientData();
+            } catch (error) {
+                console.error('Cancel error:', error);
+                showToast('Failed to cancel appointment: ' + error.message, 'error');
+            }
+        }
+
+        // Health records functions
+        async function loadHealthRecords() {
+            try {
+                const records = await patientAPI.getHealthRecords();
+                const content = document.getElementById('healthRecordsContent');
+                if (records && records.length > 0) {
+                    content.innerHTML = `
+                        <div class="space-y-3">
+                            ${records.map(record => `
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                                    <div class="flex items-start gap-3">
+                                        <svg class="h-5 w-5 text-primary mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        <div class="flex-1">
+                                            <h4 class="font-semibold">${record.title || record.type}</h4>
+                                            <p class="text-sm text-gray-600">${record.type} • ${record.doctor}</p>
+                                            <p class="text-sm text-gray-500 mt-1">${record.date}</p>
+                                            ${record.description ? `<p class="text-sm text-gray-700 mt-2">${record.description}</p>` : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = '<p class="text-center text-gray-500">No health records found</p>';
+                }
+            } catch (error) {
+                document.getElementById('healthRecordsContent').innerHTML = '<p class="text-center text-red-500">Error loading records</p>';
+            }
+        }
+
+        function showAddRecordForm() {
+            document.getElementById('addRecordModal').classList.remove('hidden');
+        }
+
+        function closeAddRecordForm() {
+            document.getElementById('addRecordModal').classList.add('hidden');
+            document.getElementById('addRecordForm').reset();
+        }
+
+        document.getElementById('addRecordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            try {
+                const record = {
+                    title: document.getElementById('recordTitle').value,
+                    type: document.getElementById('recordType').value,
+                    doctor: document.getElementById('recordDoctor').value,
+                    description: document.getElementById('recordDescription').value,
+                    date: new Date().toISOString().split('T')[0]
+                };
+                await patientAPI.addHealthRecord(record);
+                showToast('Health record added successfully!');
+                closeAddRecordForm();
+                loadHealthRecords();
+            } catch (error) {
+                showToast('Failed to add record', 'error');
+            }
+        });
+
+        // Profile functions
+        let currentProfile = null;
+        let isEditing = false;
+
+        async function loadProfile() {
+            try {
+                currentProfile = await patientAPI.getProfile();
+                displayProfile();
+            } catch (error) {
+                document.getElementById('profileContent').innerHTML = '<p class="text-center text-red-500">Error loading profile</p>';
+            }
+        }
+
+        function displayProfile() {
+            const content = document.getElementById('profileContent');
+            if (isEditing) {
+                content.innerHTML = `
+                    <div class="max-w-3xl mx-auto">
+                        <form id="editProfileForm" class="space-y-4">
+                            <h3 class="font-semibold text-lg mb-3">Personal Information</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Name</label>
+                                    <input type="text" id="editName" value="${currentProfile.name || ''}" class="w-full px-3 py-2 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Email</label>
+                                    <input type="email" id="editEmail" value="${currentProfile.email || ''}" class="w-full px-3 py-2 border rounded-lg" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Age</label>
+                                    <input type="number" id="editAge" value="${currentProfile.age || ''}" class="w-full px-3 py-2 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Phone</label>
+                                    <input type="text" id="editPhone" value="${currentProfile.phone || ''}" class="w-full px-3 py-2 border rounded-lg">
+                                </div>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-3 mt-6">Medical Information</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Blood Group</label>
+                                    <select id="editBloodGroup" class="w-full px-3 py-2 border rounded-lg">
+                                        <option value="">Select</option>
+                                        <option ${(currentProfile.bloodGroup === 'A+') ? 'selected' : ''}>A+</option>
+                                        <option ${(currentProfile.bloodGroup === 'A-') ? 'selected' : ''}>A-</option>
+                                        <option ${(currentProfile.bloodGroup === 'B+') ? 'selected' : ''}>B+</option>
+                                        <option ${(currentProfile.bloodGroup === 'B-') ? 'selected' : ''}>B-</option>
+                                        <option ${(currentProfile.bloodGroup === 'O+') ? 'selected' : ''}>O+</option>
+                                        <option ${(currentProfile.bloodGroup === 'O-') ? 'selected' : ''}>O-</option>
+                                        <option ${(currentProfile.bloodGroup === 'AB+') ? 'selected' : ''}>AB+</option>
+                                        <option ${(currentProfile.bloodGroup === 'AB-') ? 'selected' : ''}>AB-</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Height (cm)</label>
+                                    <input type="number" id="editHeight" value="${currentProfile.height || ''}" class="w-full px-3 py-2 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Weight (kg)</label>
+                                    <input type="number" id="editWeight" value="${currentProfile.weight || ''}" class="w-full px-3 py-2 border rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Allergies</label>
+                                    <input type="text" id="editAllergies" value="${currentProfile.allergies || ''}" placeholder="e.g., Penicillin, Peanuts" class="w-full px-3 py-2 border rounded-lg">
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="block text-sm text-gray-600 mb-1">Chronic Conditions</label>
+                                    <input type="text" id="editConditions" value="${currentProfile.conditions || ''}" placeholder="e.g., Diabetes, Hypertension" class="w-full px-3 py-2 border rounded-lg">
+                                </div>
+                            </div>
+                            <div class="flex gap-2 pt-4">
+                                <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90">Save</button>
+                                <button type="button" onclick="cancelEdit()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                document.getElementById('editProfileForm').addEventListener('submit', saveProfile);
+            } else {
+                content.innerHTML = `
+                    <div class="max-w-3xl mx-auto">
+                        <div class="flex justify-end mb-4">
+                            <button onclick="enableEdit()" class="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90">Edit Profile</button>
+                        </div>
+                        <div class="space-y-6 text-left">
+                            <div>
+                                <h3 class="font-semibold text-lg mb-3">Personal Information</h3>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <p class="text-sm text-gray-600">Name</p>
+                                        <p class="font-semibold">${currentProfile.name || 'N/A'}</p>
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <p class="text-sm text-gray-600">Email</p>
+                                        <p class="font-semibold">${currentProfile.email || 'N/A'}</p>
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <p class="text-sm text-gray-600">Age</p>
+                                        <p class="font-semibold">${currentProfile.age || 'N/A'}</p>
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <p class="text-sm text-gray-600">Phone</p>
+                                        <p class="font-semibold">${currentProfile.phone || 'N/A'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg mb-3">Medical Information</h3>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <p class="text-sm text-gray-600">Blood Group</p>
+                                        <p class="font-semibold">${currentProfile.bloodGroup || 'Not specified'}</p>
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <p class="text-sm text-gray-600">Height</p>
+                                        <p class="font-semibold">${currentProfile.height ? currentProfile.height + ' cm' : 'Not specified'}</p>
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <p class="text-sm text-gray-600">Weight</p>
+                                        <p class="font-semibold">${currentProfile.weight ? currentProfile.weight + ' kg' : 'Not specified'}</p>
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <p class="text-sm text-gray-600">BMI</p>
+                                        <p class="font-semibold">${currentProfile.height && currentProfile.weight ? (currentProfile.weight / ((currentProfile.height/100) ** 2)).toFixed(1) : 'N/A'}</p>
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-lg col-span-2">
+                                        <p class="text-sm text-gray-600">Allergies</p>
+                                        <p class="font-semibold">${currentProfile.allergies || 'None reported'}</p>
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-lg col-span-2">
+                                        <p class="text-sm text-gray-600">Chronic Conditions</p>
+                                        <p class="font-semibold">${currentProfile.conditions || 'None reported'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function enableEdit() {
+            isEditing = true;
+            displayProfile();
+        }
+
+        function cancelEdit() {
+            isEditing = false;
+            displayProfile();
+        }
+
+        async function saveProfile(e) {
+            e.preventDefault();
+            currentProfile.name = document.getElementById('editName').value;
+            currentProfile.age = parseInt(document.getElementById('editAge').value);
+            currentProfile.phone = document.getElementById('editPhone').value;
+            currentProfile.bloodGroup = document.getElementById('editBloodGroup').value;
+            currentProfile.height = parseInt(document.getElementById('editHeight').value) || null;
+            currentProfile.weight = parseInt(document.getElementById('editWeight').value) || null;
+            currentProfile.allergies = document.getElementById('editAllergies').value;
+            currentProfile.conditions = document.getElementById('editConditions').value;
+            isEditing = false;
+            displayProfile();
+            showToast('Profile updated successfully!');
+        }
+
+        // Video call functions
+        let localStream = null;
+        let videoEnabled = true;
+        let audioEnabled = true;
+
+        async function startVideoCall() {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                document.getElementById('localVideo').srcObject = localStream;
+                document.getElementById('videoCallModal').classList.remove('hidden');
+                showToast('Video call started');
+            } catch (error) {
+                showToast('Camera/microphone access denied', 'error');
+            }
+        }
+
+        function endVideoCall() {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+            document.getElementById('videoCallModal').classList.add('hidden');
+            showToast('Call ended');
+        }
+
+        function toggleVideo() {
+            if (localStream) {
+                videoEnabled = !videoEnabled;
+                localStream.getVideoTracks()[0].enabled = videoEnabled;
+                document.getElementById('toggleVideo').style.backgroundColor = videoEnabled ? '' : '#ef4444';
+            }
+        }
+
+        function toggleAudio() {
+            if (localStream) {
+                audioEnabled = !audioEnabled;
+                localStream.getAudioTracks()[0].enabled = audioEnabled;
+                document.getElementById('toggleAudio').style.backgroundColor = audioEnabled ? '' : '#ef4444';
+            }
+        }
+
+        // Load prescriptions
+        async function loadPrescriptions() {
+            try {
+                const prescriptions = await patientAPI.getPrescriptions();
+                const content = document.getElementById('prescriptionsContent');
+                if (prescriptions && prescriptions.length > 0) {
+                    content.innerHTML = `
+                        <div class="space-y-4">
+                            ${prescriptions.map(rx => `
+                                <div class="border border-gray-200 rounded-lg p-4 text-left">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h4 class="font-semibold text-lg">${rx.diagnosis}</h4>
+                                            <p class="text-sm text-gray-600">Prescribed by: Dr. ${rx.doctorName || 'Unknown'}</p>
+                                            <p class="text-sm text-gray-500">${rx.date}</p>
+                                        </div>
+                                        <span class="px-2 py-1 text-xs rounded ${rx.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                            ${rx.status}
+                                        </span>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg p-3 space-y-2">
+                                        <p class="font-medium text-sm">Medications:</p>
+                                        ${(rx.medications || []).map(med => `
+                                            <div class="flex justify-between text-sm">
+                                                <span class="font-medium">${med.name}</span>
+                                                <span class="text-gray-600">${med.dosage} - ${med.frequency} - ${med.duration}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    ${rx.notes ? `<p class="text-sm text-gray-700 mt-2"><strong>Notes:</strong> ${rx.notes}</p>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = '<p class="text-center text-gray-500">No prescriptions found</p>';
+                }
+            } catch (error) {
+                document.getElementById('prescriptionsContent').innerHTML = '<p class="text-center text-red-500">Error loading prescriptions</p>';
+            }
+        }
+
         // Initialize
         loadPatientData();
+        loadAllAppointments();
+        loadHealthRecords();
+        loadPrescriptions();
+        loadProfile();
     </script>
 
 </body>

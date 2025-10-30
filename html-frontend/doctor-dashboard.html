@@ -65,19 +65,6 @@
                         </svg>
                         <span>Prescriptions</span>
                     </button>
-                    <button onclick="showView('messages')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                        </svg>
-                        <span>Messages</span>
-                    </button>
-                    <button onclick="showView('settings')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                        <span>Settings</span>
-                    </button>
                 </div>
             </nav>
         </aside>
@@ -169,7 +156,7 @@
                     <div class="bg-white rounded-xl shadow-lg p-6">
                         <h3 class="text-xl font-semibold mb-4">Quick Actions</h3>
                         <div class="grid md:grid-cols-3 gap-4">
-                            <button class="p-6 border-2 border-gray-200 rounded-xl hover:border-primary transition-colors flex flex-col items-center gap-3">
+                            <button onclick="showPrescriptionModal()" class="p-6 border-2 border-gray-200 rounded-xl hover:border-primary transition-colors flex flex-col items-center gap-3">
                                 <svg class="h-10 w-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
@@ -181,11 +168,11 @@
                                 </svg>
                                 <span class="font-semibold">Manage Schedule</span>
                             </button>
-                            <button onclick="showView('messages')" class="p-6 border-2 border-gray-200 rounded-xl hover:border-primary transition-colors flex flex-col items-center gap-3">
+                            <button onclick="showView('patients')" class="p-6 border-2 border-gray-200 rounded-xl hover:border-primary transition-colors flex flex-col items-center gap-3">
                                 <svg class="h-10 w-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                                 </svg>
-                                <span class="font-semibold">Patient Messages</span>
+                                <span class="font-semibold">View Patients</span>
                             </button>
                         </div>
                     </div>
@@ -194,9 +181,19 @@
                 <!-- Schedule View -->
                 <div id="scheduleView" class="view-content hidden">
                     <div class="bg-white rounded-xl shadow-lg p-6">
-                        <h2 class="text-2xl font-bold mb-4">Schedule Management</h2>
-                        <div id="fullScheduleContent" class="text-center text-gray-500 py-12">
-                            <p>Loading schedule...</p>
+                        <h2 class="text-2xl font-bold mb-4">Weekly Schedule</h2>
+                        <div id="doctorWeeklyCalendar" class="border rounded-lg overflow-hidden">
+                            <div class="grid grid-cols-8 bg-gray-100">
+                                <div class="p-3 text-center font-medium border-r">Time</div>
+                                <div class="p-3 text-center font-medium border-r" id="docDay0"></div>
+                                <div class="p-3 text-center font-medium border-r" id="docDay1"></div>
+                                <div class="p-3 text-center font-medium border-r" id="docDay2"></div>
+                                <div class="p-3 text-center font-medium border-r" id="docDay3"></div>
+                                <div class="p-3 text-center font-medium border-r" id="docDay4"></div>
+                                <div class="p-3 text-center font-medium border-r" id="docDay5"></div>
+                                <div class="p-3 text-center font-medium" id="docDay6"></div>
+                            </div>
+                            <div id="doctorTimeSlots"></div>
                         </div>
                     </div>
                 </div>
@@ -230,28 +227,81 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </main>
+    </div>
 
-                <!-- Messages View -->
-                <div id="messagesView" class="view-content hidden">
-                    <div class="bg-white rounded-xl shadow-lg p-6">
-                        <h2 class="text-2xl font-bold mb-4">Messages</h2>
-                        <div id="messagesContent" class="text-center text-gray-500 py-12">
-                            <p>Loading messages...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Settings View -->
-                <div id="settingsView" class="view-content hidden">
-                    <div class="bg-white rounded-xl shadow-lg p-6">
-                        <h2 class="text-2xl font-bold mb-4">Settings</h2>
-                        <div class="text-center text-gray-500 py-8">
-                            <p>Settings data will be loaded from database</p>
-                        </div>
+    <!-- Video Call Modal -->
+    <div id="videoCallModal" class="fixed inset-0 bg-black hidden z-50">
+        <div class="h-full flex flex-col">
+            <div class="bg-gray-900 p-4 flex justify-between items-center">
+                <h3 class="text-white font-semibold">Video Consultation</h3>
+                <button onclick="endVideoCall()" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">End Call</button>
+            </div>
+            <div class="flex-1 relative bg-gray-800">
+                <video id="localVideo" autoplay muted class="absolute top-4 right-4 w-48 h-36 bg-gray-700 rounded-lg border-2 border-white"></video>
+                <div class="w-full h-full flex items-center justify-center">
+                    <div class="text-center text-white">
+                        <svg class="h-32 w-32 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="text-xl">Waiting for patient to join...</p>
+                        <p class="text-sm text-gray-400 mt-2">Your camera is active</p>
                     </div>
                 </div>
             </div>
-        </main>
+            <div class="bg-gray-900 p-4 flex justify-center gap-4">
+                <button id="toggleVideo" onclick="toggleVideo()" class="p-4 bg-gray-700 rounded-full hover:bg-gray-600">
+                    <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                </button>
+                <button id="toggleAudio" onclick="toggleAudio()" class="p-4 bg-gray-700 rounded-full hover:bg-gray-600">
+                    <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prescription Modal -->
+    <div id="prescriptionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl p-6 w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Write Prescription</h3>
+                <button onclick="closePrescriptionModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="prescriptionForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Patient</label>
+                    <select id="patientSelect" class="w-full px-3 py-2 border rounded-lg" required>
+                        <option value="">Select Patient</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Diagnosis</label>
+                    <input type="text" id="diagnosis" class="w-full px-3 py-2 border rounded-lg" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Medicines</label>
+                    <div id="medicinesList" class="space-y-2 mb-2"></div>
+                    <button type="button" onclick="addMedicine()" class="px-4 py-2 border border-primary text-primary rounded-lg hover:bg-accent">+ Add Medicine</button>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Notes</label>
+                    <textarea id="notes" class="w-full px-3 py-2 border rounded-lg" rows="3"></textarea>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90">Send Prescription</button>
+                    <button type="button" onclick="closePrescriptionModal()" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="api.js"></script>
@@ -316,12 +366,13 @@
                                             <div>
                                                 <p class="font-semibold">${consultation.patient}</p>
                                                 <p class="text-sm text-gray-600">${consultation.type} Consultation</p>
+                                                ${consultation.healthIssue && consultation.healthIssue !== 'N/A' ? `<p class="text-sm text-gray-700 mt-1"><strong>Issue:</strong> ${consultation.healthIssue}</p>` : ''}
                                             </div>
                                             ${consultation.priority === 'high' ? '<span class="text-xs px-2 py-1 rounded bg-red-100 text-red-600 font-medium">High Priority</span>' : ''}
                                         </div>
                                         <div class="flex items-center justify-between">
                                             <span class="text-sm text-gray-600">${consultation.time}</span>
-                                            <button class="px-3 py-1 text-sm border border-primary text-primary rounded hover:bg-accent">Start</button>
+                                            <button onclick="startVideoCall()" class="px-3 py-1 text-sm border border-primary text-primary rounded hover:bg-accent">Start</button>
                                         </div>
                                     </div>
                                 `).join('')}
@@ -367,8 +418,415 @@
             }
         }
 
+        // Prescription functions
+        const commonMedicines = [
+            'Paracetamol', 'Ibuprofen', 'Amoxicillin', 'Azithromycin', 'Ciprofloxacin',
+            'Metformin', 'Atorvastatin', 'Amlodipine', 'Omeprazole', 'Aspirin',
+            'Cetirizine', 'Montelukast', 'Salbutamol', 'Insulin', 'Levothyroxine'
+        ];
+        const timings = ['Morning', 'Afternoon', 'Evening', 'Night', 'Before Meals', 'After Meals'];
+        let medicineCount = 0;
+
+        async function showPrescriptionModal() {
+            document.getElementById('prescriptionModal').classList.remove('hidden');
+            try {
+                const patients = await doctorAPI.getPatients();
+                const select = document.getElementById('patientSelect');
+                select.innerHTML = '<option value="">Select Patient</option>' + 
+                    patients.map(p => `<option value="${p.id}" data-name="${p.name}">${p.name}</option>`).join('');
+            } catch (error) {
+                console.error('Error loading patients:', error);
+            }
+            medicineCount = 0;
+            document.getElementById('medicinesList').innerHTML = '';
+            addMedicine();
+        }
+
+        function closePrescriptionModal() {
+            document.getElementById('prescriptionModal').classList.add('hidden');
+            document.getElementById('prescriptionForm').reset();
+        }
+
+        function addMedicine() {
+            const id = medicineCount++;
+            const html = `
+                <div class="grid grid-cols-12 gap-2 items-start" id="medicine-${id}">
+                    <select class="col-span-4 px-3 py-2 border rounded-lg" required>
+                        <option value="">Select Medicine</option>
+                        ${commonMedicines.map(m => `<option value="${m}">${m}</option>`).join('')}
+                    </select>
+                    <input type="text" placeholder="Dosage (e.g., 500mg)" class="col-span-3 px-3 py-2 border rounded-lg" required>
+                    <select class="col-span-3 px-3 py-2 border rounded-lg" required>
+                        <option value="">Timing</option>
+                        ${timings.map(t => `<option value="${t}">${t}</option>`).join('')}
+                    </select>
+                    <input type="text" placeholder="Days" class="col-span-1 px-3 py-2 border rounded-lg" required>
+                    <button type="button" onclick="removeMedicine(${id})" class="col-span-1 px-2 py-2 text-red-600 hover:bg-red-50 rounded-lg">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            document.getElementById('medicinesList').insertAdjacentHTML('beforeend', html);
+        }
+
+        function removeMedicine(id) {
+            document.getElementById(`medicine-${id}`).remove();
+        }
+
+        document.getElementById('prescriptionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const patientSelect = document.getElementById('patientSelect');
+            const patientId = patientSelect.value;
+            const patientName = patientSelect.options[patientSelect.selectedIndex].dataset.name;
+            
+            if (!patientId) {
+                showToast('Please select a patient', 'error');
+                return;
+            }
+            
+            const medicines = [];
+            document.querySelectorAll('#medicinesList > div').forEach(div => {
+                const inputs = div.querySelectorAll('select, input');
+                if (inputs[0].value) {
+                    medicines.push({
+                        name: inputs[0].value,
+                        dosage: inputs[1].value,
+                        frequency: inputs[2].value,
+                        duration: inputs[3].value + ' days'
+                    });
+                }
+            });
+            
+            if (medicines.length === 0) {
+                showToast('Please add at least one medicine', 'error');
+                return;
+            }
+
+            const prescription = {
+                patientId,
+                patientName,
+                diagnosis: document.getElementById('diagnosis').value,
+                medications: medicines,
+                notes: document.getElementById('notes').value,
+                date: new Date().toISOString().split('T')[0],
+                status: 'active'
+            };
+
+            doctorAPI.createPrescription(prescription)
+                .then(result => {
+                    closePrescriptionModal();
+                    showToast('Prescription sent successfully!');
+                })
+                .catch(error => {
+                    console.error('Prescription error:', error);
+                    showToast('Error: ' + error.message, 'error');
+                });
+        });
+
+        // Video call functions
+        let localStream = null;
+        let videoEnabled = true;
+        let audioEnabled = true;
+
+        async function startVideoCall() {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                document.getElementById('localVideo').srcObject = localStream;
+                document.getElementById('videoCallModal').classList.remove('hidden');
+                showToast('Video call started');
+            } catch (error) {
+                showToast('Camera/microphone access denied', 'error');
+            }
+        }
+
+        function endVideoCall() {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+            document.getElementById('videoCallModal').classList.add('hidden');
+            showToast('Call ended');
+        }
+
+        function toggleVideo() {
+            if (localStream) {
+                videoEnabled = !videoEnabled;
+                localStream.getVideoTracks()[0].enabled = videoEnabled;
+                document.getElementById('toggleVideo').style.backgroundColor = videoEnabled ? '' : '#ef4444';
+            }
+        }
+
+        function toggleAudio() {
+            if (localStream) {
+                audioEnabled = !audioEnabled;
+                localStream.getAudioTracks()[0].enabled = audioEnabled;
+                document.getElementById('toggleAudio').style.backgroundColor = audioEnabled ? '' : '#ef4444';
+            }
+        }
+
+        // Load full schedule
+        async function loadFullSchedule() {
+            try {
+                const schedule = await doctorAPI.getSchedule();
+                renderDoctorWeeklyCalendar(schedule);
+            } catch (error) {
+                console.error('Error loading schedule:', error);
+            }
+        }
+
+        function renderDoctorWeeklyCalendar(appointments) {
+            const today = new Date();
+            const days = [];
+            const timeSlots = ['9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'];
+            
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                days.push(date);
+                
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+                const dayNum = date.getDate();
+                const month = date.toLocaleDateString('en-US', { month: 'short' });
+                document.getElementById(`docDay${i}`).innerHTML = `<div class="font-semibold">${dayName}</div><div class="text-sm text-gray-500">${month} ${dayNum}</div>`;
+            }
+            
+            const appointmentMap = {};
+            appointments.forEach(apt => {
+                const dateStr = apt.date ? apt.date.split('T')[0] : '';
+                const key = `${dateStr}_${apt.time}`;
+                appointmentMap[key] = apt;
+            });
+            
+            let slotsHTML = '';
+            timeSlots.forEach(time => {
+                slotsHTML += '<div class="grid grid-cols-8 border-t">';
+                slotsHTML += `<div class="p-3 text-sm font-medium text-gray-600 border-r bg-gray-50">${time}</div>`;
+                
+                days.forEach((date, index) => {
+                    const dateStr = date.toISOString().split('T')[0];
+                    const key = `${dateStr}_${time}`;
+                    const apt = appointmentMap[key];
+                    
+                    if (apt) {
+                        const statusColor = apt.status === 'scheduled' ? 'bg-green-100 border-green-300' : apt.status === 'blocked' ? 'bg-red-100 border-red-300' : 'bg-gray-100 border-gray-300';
+                        const isBlocked = apt.status === 'blocked';
+                        slotsHTML += `
+                            <div class="p-2 text-xs ${statusColor} border ${index < 6 ? 'border-r' : ''} relative group cursor-pointer" onclick="${isBlocked ? `unblockSlot('${apt.id}')` : `editAppointment('${apt.id}', '${dateStr}', '${time}')`}">
+                                <div class="font-semibold">${isBlocked ? 'Blocked' : apt.patientName}</div>
+                                <div class="text-gray-600">${isBlocked ? 'Unavailable' : apt.type}</div>
+                                ${!isBlocked && apt.healthIssue && apt.healthIssue !== 'N/A' ? `<div class="text-gray-700 mt-1 truncate">${apt.healthIssue}</div>` : ''}
+                                <div class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick="event.stopPropagation(); ${isBlocked ? `unblockSlot('${apt.id}')` : `cancelDoctorAppointment('${apt.id}')`}" class="p-1 ${isBlocked ? 'bg-green-500' : 'bg-red-500'} text-white rounded hover:opacity-80" title="${isBlocked ? 'Unblock' : 'Cancel'}">
+                                        <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${isBlocked ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12'}"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        slotsHTML += `<div class="p-2 text-center text-gray-400 text-xs ${index < 6 ? 'border-r' : ''} hover:bg-blue-50 cursor-pointer transition-colors" onclick="blockSlot('${dateStr}', '${time}')">Free<div class="text-xs opacity-0 hover:opacity-100">Click to block</div></div>`;
+                    }
+                });
+                
+                slotsHTML += '</div>';
+            });
+            
+            document.getElementById('doctorTimeSlots').innerHTML = slotsHTML;
+        }
+
+        async function editAppointment(aptId, currentDate, currentTime) {
+            const newDate = prompt('Enter new date (YYYY-MM-DD):', currentDate);
+            if (!newDate) return;
+            
+            const newTime = prompt('Enter new time:', currentTime);
+            if (!newTime) return;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/doctor/appointments/${aptId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${getToken()}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ date: newDate, time: newTime })
+                });
+                
+                if (!response.ok) throw new Error('Failed to update');
+                
+                showToast('Appointment updated successfully');
+                loadFullSchedule();
+            } catch (error) {
+                showToast('Failed to update appointment', 'error');
+            }
+        }
+
+        async function cancelDoctorAppointment(aptId) {
+            if (!confirm('Cancel this appointment?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/doctor/appointments/${aptId}/cancel`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                
+                if (!response.ok) throw new Error('Failed to cancel');
+                
+                showToast('Appointment cancelled');
+                loadFullSchedule();
+                loadDoctorData();
+            } catch (error) {
+                showToast('Failed to cancel appointment', 'error');
+            }
+        }
+
+        async function blockSlot(date, time) {
+            const reason = prompt('Block this time slot?\nReason (optional):');
+            if (reason === null) return;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/doctor/block-slot`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${getToken()}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        date: date,
+                        time: time,
+                        notes: reason || 'Time blocked by doctor'
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to block');
+                
+                showToast('Time slot blocked');
+                loadFullSchedule();
+            } catch (error) {
+                console.error('Block error:', error);
+                showToast('Failed to block slot', 'error');
+            }
+        }
+
+        async function unblockSlot(aptId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/doctor/appointments/${aptId}/cancel`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+                
+                if (!response.ok) throw new Error('Failed to unblock');
+                
+                showToast('Time slot unblocked');
+                loadFullSchedule();
+            } catch (error) {
+                showToast('Failed to unblock slot', 'error');
+            }
+        }
+
+        // Load all patients
+        async function loadAllPatients() {
+            try {
+                const patients = await doctorAPI.getPatients();
+                const content = document.getElementById('allPatientsContent');
+                if (patients && patients.length > 0) {
+                    content.innerHTML = `
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            ${patients.map(patient => `
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div>
+                                            <h4 class="font-semibold">${patient.name}</h4>
+                                            <p class="text-sm text-gray-600">Age: ${patient.age}</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mt-2">Phone: ${patient.phone}</p>
+                                    <p class="text-sm text-gray-600">Email: ${patient.email}</p>
+                                    <p class="text-sm text-gray-500 mt-2">Last Visit: ${patient.lastVisit || 'N/A'}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = '<p class="text-center text-gray-500">No patients found</p>';
+                }
+            } catch (error) {
+                document.getElementById('allPatientsContent').innerHTML = '<p class="text-center text-red-500">Error loading patients</p>';
+            }
+        }
+
+        // Load all consultations
+        async function loadAllConsultations() {
+            try {
+                const consultations = await doctorAPI.getConsultations();
+                const content = document.getElementById('consultationsContent');
+                if (consultations && consultations.length > 0) {
+                    content.innerHTML = `
+                        <div class="space-y-3">
+                            ${consultations.map(consultation => `
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-semibold">${consultation.patientName}</h4>
+                                            <p class="text-sm text-gray-600">${consultation.date} at ${consultation.time}</p>
+                                            <p class="text-sm text-gray-500 mt-1">Duration: ${consultation.duration || 30} mins</p>
+                                        </div>
+                                        <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-800">Completed</span>
+                                    </div>
+                                    ${consultation.notes ? `<p class="text-sm text-gray-700 mt-2">${consultation.notes}</p>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = '<p class="text-center text-gray-500">No consultations found</p>';
+                }
+            } catch (error) {
+                document.getElementById('consultationsContent').innerHTML = '<p class="text-center text-red-500">Error loading consultations</p>';
+            }
+        }
+
+        // Load prescriptions
+        async function loadAllPrescriptions() {
+            try {
+                const prescriptions = await doctorAPI.getPrescriptions();
+                const content = document.getElementById('prescriptionsContent');
+                if (prescriptions && prescriptions.length > 0) {
+                    content.innerHTML = `
+                        <div class="space-y-3">
+                            ${prescriptions.map(rx => `
+                                <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-semibold">${rx.patientName}</h4>
+                                            <p class="text-sm text-gray-600">Medication: ${rx.medication}</p>
+                                            <p class="text-sm text-gray-500">Dosage: ${rx.dosage}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm text-gray-600">${rx.date}</p>
+                                            <p class="text-sm text-gray-500">${rx.duration}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = '<p class="text-center text-gray-500">No prescriptions found</p>';
+                }
+            } catch (error) {
+                document.getElementById('prescriptionsContent').innerHTML = '<p class="text-center text-red-500">Error loading prescriptions</p>';
+            }
+        }
+
         // Initialize
         loadDoctorData();
+        loadFullSchedule();
+        loadAllPatients();
+        loadAllConsultations();
+        loadAllPrescriptions();
     </script>
 
 </body>

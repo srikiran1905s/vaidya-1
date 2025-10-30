@@ -323,3 +323,20 @@ a, button, input, select, textarea {
 .shadow-large {
   box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.16);
 }
+
+/* Weekly Calendar Styles */
+.slot-btn {
+  cursor: pointer;
+  border: none;
+  background: white;
+  width: 100%;
+}
+
+.slot-btn:hover:not(.bg-primary) {
+  background-color: #f0fdfa;
+}
+
+.slot-btn.bg-primary {
+  background-color: var(--primary) !important;
+  color: white !important;
+}

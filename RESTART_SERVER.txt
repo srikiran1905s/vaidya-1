@@ -1,0 +1,22 @@
+IMPORTANT: RESTART THE FLASK SERVER
+
+The appointment cancellation feature has been updated.
+
+To apply the changes:
+
+1. Stop the Flask server (Press Ctrl+C in the terminal where it's running)
+
+2. Start it again:
+   cd backend_flask
+   python app.py
+
+3. The cancel appointment endpoint is now available at:
+   POST /api/patient/appointments/<appointment_id>/cancel
+
+The changes made:
+- Backend route accepts both POST and PUT methods
+- Frontend uses POST method
+- Cancellation updates status to 'cancelled' in database
+- Changes reflect everywhere (patient dashboard, doctor dashboard)
+
+After restarting, the cancel button should work properly!

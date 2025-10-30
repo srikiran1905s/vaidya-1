@@ -1,15 +1,15 @@
 services:
-  # Backend API Service
+  # Backend API Service (Flask)
   - type: web
     name: vaidya-backend
-    runtime: node
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && npm start
+    runtime: python
+    buildCommand: pip install -r backend_flask/requirements.txt
+    startCommand: python backend_flask/app.py
     envVars:
-      - key: NODE_ENV
-        value: production
-      - key: MONGODB_URI
-        sync: false
+      - key: PORT
+        value: 5000
+      - key: FRONTEND_URL
+        value: https://vaidya-frontend.onrender.com
       - key: JWT_SECRET
         generateValue: true
     healthCheckPath: /api/health

@@ -34,11 +34,22 @@ const apiCall = async (endpoint, options = {}) => {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ error: 'API request failed' }));
-      throw new Error(error.error || 'API request failed');
+      let errorMsg = 'API request failed';
+      try {
+        const error = await response.json();
+        errorMsg = error.error || errorMsg;
+      } catch (e) {
+        errorMsg = `Server error: ${response.status}`;
+      }
+      throw new Error(errorMsg);
     }
 
-    return response.json();
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    } else {
+      throw new Error('Server returned non-JSON response');
+    }
   } catch (error) {
     throw error;
   }
@@ -87,6 +98,12 @@ const patientAPI = {
   }),
   
   getConsultations: () => apiCall('/patient/consultations'),
+  
+  cancelAppointment: (appointmentId) => apiCall(`/patient/appointments/${appointmentId}/cancel`, {
+    method: 'POST',
+  }),
+  
+  getPrescriptions: () => apiCall('/patient/prescriptions'),
 };
 
 // Doctor APIs
@@ -113,4 +130,55 @@ const doctorAPI = {
   }),
   
   getMessages: () => apiCall('/doctor/messages'),
+  
+  getPatients: () => apiCall('/doctor/patients'),
+};
+
+// Common APIs
+const commonAPI = {
+  getAllDoctors: () => apiCall('/doctors'),
+};
+
+// AI Assistant API
+const AI_API_KEY = 'YOUR_GROQ_API_KEY_HERE'; // Replace with your Groq API key
+
+const aiAPI = {
+  sendMessage: async (message) => {
+    try {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${AI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-8b-instant',
+          messages: [{
+            role: 'system',
+            content: 'You are a helpful medical AI assistant. Provide health information and guidance, but always remind users to consult with healthcare professionals for serious concerns.'
+          }, {
+            role: 'user',
+            content: message
+          }],
+          max_tokens: 1000,
+          temperature: 0.7
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `API error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      if (data.choices && data.choices[0] && data.choices[0].message) {
+        return data.choices[0].message.content;
+      } else {
+        throw new Error('Invalid response from AI');
+      }
+    } catch (error) {
+      console.error('AI API Error:', error);
+      throw new Error(error.message || 'AI service unavailable');
+    }
+  }
 };
