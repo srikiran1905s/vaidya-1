@@ -2,30 +2,16 @@
   "name": "vaidya-healthcare",
   "version": "1.0.0",
   "description": "Vaidya Healthcare Telemedicine Platform",
-  "main": "backend/server.js",
+  "main": "backend_flask/app.py",
   "scripts": {
-    "start": "node backend/server.js",
-    "build": "echo 'Build complete'",
-    "install-deps": "cd backend && npm ci",
-    "dev": "cd backend && npm run dev",
-    "seed": "cd backend && npm run seed"
+    "start": "cd backend_flask && python app.py",
+    "build": "pip install -r backend_flask/requirements.txt",
+    "dev": "cd backend_flask && python app.py"
   },
   "keywords": ["telemedicine", "healthcare", "nodejs", "mongodb"],
   "author": "Srikiran (with Cascade AI)",
   "license": "MIT",
-  "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^8.0.3",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "express-validator": "^7.0.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.2"
-  },
   "engines": {
-    "node": ">=18.0.0"
+    "python": ">=3.9.0"
   }
 }
