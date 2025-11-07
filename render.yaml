@@ -4,7 +4,7 @@ services:
     name: vaidya-backend
     runtime: python
     buildCommand: pip install -r backend_flask/requirements.txt
-    startCommand: python backend_flask/app.py
+    startCommand: gunicorn --bind 0.0.0.0:$PORT backend_flask.app:app
     envVars:
       - key: PORT
         value: 5000
