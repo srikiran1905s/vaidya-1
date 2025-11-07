@@ -140,13 +140,8 @@ const commonAPI = {
 };
 
 // AI Assistant API
-// IMPORTANT: Add your Groq API key here
-// Get your free API key from: https://console.groq.com/keys
+// Add your Groq API key here: https://console.groq.com/keys
 const AI_API_KEY = 'YOUR_GROQ_API_KEY_HERE';
-
-if (AI_API_KEY === 'YOUR_GROQ_API_KEY_HERE') {
-  console.warn('⚠️ Groq API key not configured. AI Assistant will not work. Get your key from: https://console.groq.com/keys');
-}
 
 const aiAPI = {
   sendMessage: async (message) => {

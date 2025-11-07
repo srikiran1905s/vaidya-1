@@ -1000,31 +1000,59 @@
                 const content = document.getElementById('prescriptionsContent');
                 if (prescriptions && prescriptions.length > 0) {
                     content.innerHTML = `
-                        <div class="space-y-4">
-                            ${prescriptions.map(rx => `
-                                <div class="border border-gray-200 rounded-lg p-4 text-left">
-                                    <div class="flex justify-between items-start mb-3">
-                                        <div>
-                                            <h4 class="font-semibold text-lg">${rx.diagnosis}</h4>
-                                            <p class="text-sm text-gray-600">Prescribed by: Dr. ${rx.doctorName || 'Unknown'}</p>
-                                            <p class="text-sm text-gray-500">${rx.date}</p>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${prescriptions.map((rx, index) => {
+                                const colors = ['bg-yellow-100 border-yellow-300', 'bg-pink-100 border-pink-300', 'bg-blue-100 border-blue-300', 'bg-green-100 border-green-300', 'bg-purple-100 border-purple-300'];
+                                const color = colors[index % colors.length];
+                                return `
+                                <div class="${color} border-2 rounded-lg p-6 shadow-lg transform hover:scale-105 transition-transform relative" style="min-height: 300px;">
+                                    <div class="absolute top-2 right-2">
+                                        <button onclick="downloadPrescription('${rx.id}')" class="p-2 bg-white rounded-full shadow hover:bg-gray-100" title="Download">
+                                            <svg class="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="mb-4">
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <svg class="h-6 w-6 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                            </svg>
+                                            <h3 class="text-xl font-bold">Prescription</h3>
                                         </div>
-                                        <span class="px-2 py-1 text-xs rounded ${rx.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                        <p class="text-sm font-semibold text-gray-700">${rx.diagnosis}</p>
+                                        <p class="text-xs text-gray-600 mt-1">Dr. ${rx.doctorName || 'Unknown'}</p>
+                                        <p class="text-xs text-gray-500">${rx.date}</p>
+                                    </div>
+                                    <div class="space-y-3 mb-4">
+                                        <p class="text-sm font-semibold text-gray-800">💊 Medications:</p>
+                                        ${(rx.medications || []).map(med => {
+                                            const dur = (function(s){
+                                                const str = String(s||'').trim();
+                                                const lw = str.toLowerCase();
+                                                const weekdays = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+                                                if (!str) return '';
+                                                if (weekdays.includes(lw)) return lw.charAt(0).toUpperCase() + lw.slice(1);
+                                                if (/^\d+$/.test(str)) return str + (str === '1' ? ' day' : ' days');
+                                                if (lw.includes('day')) return str.charAt(0).toUpperCase() + str.slice(1);
+                                                return str.charAt(0).toUpperCase() + str.slice(1);
+                                            })(med.duration);
+                                            return `
+                                            <div class="bg-white bg-opacity-50 rounded p-2 text-sm">
+                                                <p class="font-bold text-gray-800">${med.name}</p>
+                                                <p class="text-xs text-gray-700">${med.dosage}</p>
+                                                <p class="text-xs text-gray-700">${med.frequency} - ${dur}</p>
+                                            </div>
+                                        `}).join('')}
+                                    </div>
+                                    ${rx.notes ? `<div class="bg-white bg-opacity-50 rounded p-2 mt-3"><p class="text-xs text-gray-700"><strong>📝 Notes:</strong> ${rx.notes}</p></div>` : ''}
+                                    <div class="absolute bottom-2 right-2">
+                                        <span class="px-2 py-1 text-xs rounded-full ${rx.status === 'active' ? 'bg-green-500 text-white' : 'bg-gray-400 text-white'}">
                                             ${rx.status}
                                         </span>
                                     </div>
-                                    <div class="bg-gray-50 rounded-lg p-3 space-y-2">
-                                        <p class="font-medium text-sm">Medications:</p>
-                                        ${(rx.medications || []).map(med => `
-                                            <div class="flex justify-between text-sm">
-                                                <span class="font-medium">${med.name}</span>
-                                                <span class="text-gray-600">${med.dosage} - ${med.frequency} - ${med.duration}</span>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                    ${rx.notes ? `<p class="text-sm text-gray-700 mt-2"><strong>Notes:</strong> ${rx.notes}</p>` : ''}
                                 </div>
-                            `).join('')}
+                            `}).join('')}
                         </div>
                     `;
                 } else {
@@ -1032,6 +1060,172 @@
                 }
             } catch (error) {
                 document.getElementById('prescriptionsContent').innerHTML = '<p class="text-center text-red-500">Error loading prescriptions</p>';
+            }
+        }
+
+        // Download prescription as image
+        async function downloadPrescription(prescriptionId) {
+            try {
+                const prescriptions = await patientAPI.getPrescriptions();
+                const rx = prescriptions.find(p => p.id === prescriptionId);
+                if (!rx) return;
+
+                // helper to convert a free text frequency to a M-A-N schedule like 1-0-1
+                function frequencyToMAN(freq) {
+                    if (!freq) return '0-0-0';
+                    const f = String(freq).toLowerCase();
+                    // morning, afternoon, night/evening
+                    const m = (f.includes('morning') || f.includes('before') && f.includes('morning')) ? 1 : 0;
+                    const a = f.includes('afternoon') ? 1 : 0;
+                    const n = (f.includes('night') || f.includes('evening') || f.includes('bed')) ? 1 : 0;
+                    // if single token like 'morning' -> 1-0-0
+                    if (m + a + n === 0) {
+                        // try common words
+                        if (f.includes('before') || f.includes('after')) return '— ' + freq;
+                        return '0-0-0';
+                    }
+                    return `${m}-${a}-${n}`;
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = 850;
+                canvas.height = 1100;
+                const ctx = canvas.getContext('2d');
+
+                // Background
+                ctx.fillStyle = '#fffdf6';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Header band
+                ctx.fillStyle = '#2b6ef6';
+                ctx.fillRect(0, 0, canvas.width, 120);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '700 40px "Segoe UI", Arial';
+                ctx.fillText('Vaidya Prescription', 48, 70);
+
+                // Subtitle / small text
+                ctx.font = '16px "Segoe UI", Arial';
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                ctx.fillText('Trusted Telemedicine Care', 48, 98);
+
+                // Patient / Doctor block
+                ctx.fillStyle = '#111827';
+                ctx.font = '700 22px "Segoe UI", Arial';
+                ctx.fillText(rx.patientName || 'Patient', 48, 160);
+
+                ctx.font = '600 16px "Segoe UI", Arial';
+                ctx.fillStyle = '#374151';
+                ctx.fillText('Diagnosis: ' + (rx.diagnosis || 'N/A'), 48, 190);
+                ctx.fillText('Doctor: ' + (rx.doctorName || 'Unknown'), 48, 216);
+                ctx.fillText('Date: ' + (rx.date || ''), 48, 240);
+
+                // Divider
+                ctx.strokeStyle = '#e5e7eb';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(48, 260);
+                ctx.lineTo(canvas.width - 48, 260);
+                ctx.stroke();
+
+                // Medications header
+                ctx.fillStyle = '#111827';
+                ctx.font = '700 20px "Segoe UI", Arial';
+                ctx.fillText('Medications', 48, 295);
+
+                let y = 330;
+                const boxW = canvas.width - 96;
+                (rx.medications || []).forEach((med, i) => {
+                    // Card background
+                    ctx.fillStyle = '#ffffff';
+                    ctx.strokeStyle = '#e6e8eb';
+                    ctx.lineWidth = 1;
+                    const cardH = 78;
+                    ctx.fillRect(48, y - 32, boxW, cardH);
+                    ctx.strokeRect(48, y - 32, boxW, cardH);
+
+                    // Medicine name and dosage
+                    ctx.fillStyle = '#0f172a';
+                    ctx.font = '700 18px "Segoe UI", Arial';
+                    ctx.fillText((i + 1) + '. ' + med.name, 64, y - 6);
+                    ctx.font = '600 14px "Segoe UI", Arial';
+                    ctx.fillStyle = '#374151';
+                    ctx.fillText(med.dosage || '', 64, y + 14);
+
+                    // Schedule as 0-0-0
+                    const schedule = frequencyToMAN(med.frequency);
+                    ctx.fillStyle = '#065f46';
+                    ctx.font = '700 16px "Segoe UI", Arial';
+                    ctx.fillText(schedule, canvas.width - 160, y + 0);
+
+                    // Duration (normalized)
+                    ctx.fillStyle = '#6b7280';
+                    ctx.font = '14px "Segoe UI", Arial';
+                    (function writeDuration(d){
+                        const s = String(d||'').trim();
+                        if (!s) return ctx.fillText('', canvas.width - 160, y + 22);
+                        const lw = s.toLowerCase();
+                        const weekdays = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+                        let out = s;
+                        if (weekdays.includes(lw)) out = lw.charAt(0).toUpperCase() + lw.slice(1);
+                        else if (/^\d+$/.test(s)) out = s + (s === '1' ? ' day' : ' days');
+                        else if (lw.includes('day')) out = s.charAt(0).toUpperCase() + s.slice(1);
+                        else out = s.charAt(0).toUpperCase() + s.slice(1);
+                        ctx.fillText(out, canvas.width - 160, y + 22);
+                    })(med.duration);
+
+                    y += cardH + 18;
+                });
+
+                // Notes
+                if (rx.notes) {
+                    ctx.fillStyle = '#111827';
+                    ctx.font = '700 18px "Segoe UI", Arial';
+                    ctx.fillText('Notes', 48, y + 10);
+                    ctx.font = '14px "Segoe UI", Arial';
+                    ctx.fillStyle = '#374151';
+                    // wrap text for notes
+                    const notes = rx.notes;
+                    const maxW = canvas.width - 96;
+                    let line = '';
+                    let lineY = y + 36;
+                    notes.split(' ').forEach(word => {
+                        const test = line ? line + ' ' + word : word;
+                        const metrics = ctx.measureText(test);
+                        if (metrics.width > maxW) {
+                            ctx.fillText(line, 48, lineY);
+                            line = word;
+                            lineY += 20;
+                        } else {
+                            line = test;
+                        }
+                    });
+                    if (line) ctx.fillText(line, 48, lineY);
+                }
+
+                // Footer signature
+                ctx.font = '600 16px "Segoe UI", Arial';
+                ctx.fillStyle = '#374151';
+                ctx.fillText('Signature:', 48, canvas.height - 120);
+                ctx.strokeStyle = '#d1d5db';
+                ctx.beginPath();
+                ctx.moveTo(48, canvas.height - 100);
+                ctx.lineTo(300, canvas.height - 100);
+                ctx.stroke();
+
+                // Download
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `prescription_${rx.date || Date.now()}.png`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+
+                showToast('Prescription downloaded successfully!');
+            } catch (error) {
+                console.error(error);
+                showToast('Failed to download prescription', 'error');
             }
         }
 

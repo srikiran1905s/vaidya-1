@@ -425,6 +425,21 @@
             'Cetirizine', 'Montelukast', 'Salbutamol', 'Insulin', 'Levothyroxine'
         ];
         const timings = ['Morning', 'Afternoon', 'Evening', 'Night', 'Before Meals', 'After Meals'];
+        function normalizeDuration(raw) {
+            const s = String(raw || '').trim();
+            if (!s) return '';
+            const lw = s.toLowerCase();
+            const weekdays = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+            if (weekdays.includes(lw)) return lw.charAt(0).toUpperCase() + lw.slice(1);
+            if (/^\d+$/.test(s)) return s + (s === '1' ? ' day' : ' days');
+            // if already contains 'day' or 'days', normalize spacing and capitalization
+            if (lw.includes('day')) {
+                // keep as-is but trim and lower-case except first letter
+                return s.charAt(0).toUpperCase() + s.slice(1);
+            }
+            // fallback: capitalize first letter
+            return s.charAt(0).toUpperCase() + s.slice(1);
+        }
         let medicineCount = 0;
 
         async function showPrescriptionModal() {
@@ -494,7 +509,7 @@
                         name: inputs[0].value,
                         dosage: inputs[1].value,
                         frequency: inputs[2].value,
-                        duration: inputs[3].value + ' days'
+                        duration: normalizeDuration(inputs[3].value)
                     });
                 }
             });
@@ -699,14 +714,40 @@
                         notes: reason || 'Time blocked by doctor'
                     })
                 });
-                
-                if (!response.ok) throw new Error('Failed to block');
-                
+
+                // Try to parse JSON body for helpful info and to detect success even when status isn't 2xx
+                let body = null;
+                try { body = await response.clone().json(); } catch (e) { /* ignore parse errors */ }
+
+                // Consider success if response.ok OR body looks like the created blocked appointment
+                const looksLikeBlocked = body && (body.status === 'blocked' || body.patientName === 'Blocked' || body.id || body._id);
+                if (!response.ok && !looksLikeBlocked) {
+                    // build a helpful message including status and any server error text
+                    let msg = `Failed to block (status ${response.status})`;
+                    try { if (body && body.error) msg = body.error; } catch(e){}
+                    throw new Error(msg);
+                }
+
+                // Treat as success
                 showToast('Time slot blocked');
-                loadFullSchedule();
+
+                // If the server returned the created appointment, try to optimistically insert into UI
+                try {
+                    if (looksLikeBlocked) {
+                        // refresh schedule (non-blocking)
+                        await loadFullSchedule();
+                    } else {
+                        // fallback: still try to refresh schedule
+                        await loadFullSchedule();
+                    }
+                } catch (refreshErr) {
+                    console.warn('Failed to refresh schedule after blocking slot:', refreshErr);
+                    showToast('Blocked but failed to refresh schedule', 'warning');
+                }
             } catch (error) {
                 console.error('Block error:', error);
-                showToast('Failed to block slot', 'error');
+                // show a clear error message only when blocking failed
+                showToast('Failed to block slot: ' + (error.message || ''), 'error');
             }
         }
 
@@ -806,7 +847,16 @@
                                         </div>
                                         <div class="text-right">
                                             <p class="text-sm text-gray-600">${rx.date}</p>
-                                            <p class="text-sm text-gray-500">${rx.duration}</p>
+                                            <p class="text-sm text-gray-500">${(function(s){
+                                                const str = String(s||'').trim();
+                                                if (!str) return '';
+                                                const lw = str.toLowerCase();
+                                                const weekdays = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+                                                if (weekdays.includes(lw)) return lw.charAt(0).toUpperCase() + lw.slice(1);
+                                                if (/^\d+$/.test(str)) return str + (str === '1' ? ' day' : ' days');
+                                                if (lw.includes('day')) return str.charAt(0).toUpperCase() + str.slice(1);
+                                                return str.charAt(0).toUpperCase() + str.slice(1);
+                                            })(rx.duration)}</p>
                                         </div>
                                     </div>
                                 </div>
